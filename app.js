@@ -72,5 +72,4 @@ function createMediaRecorder(stream, websocket) {
   };
 }
 
-init()
-
+init();

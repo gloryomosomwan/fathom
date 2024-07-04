@@ -2,6 +2,7 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 80 });
 const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
+const { translateText } = require('./translate');
 
 const request = {
   config: {
@@ -26,8 +27,11 @@ wss.on('connection', function connection(ws) {
         buffer = buffer + result;
         if (!activeTimer) {
           activeTimer = true;
-          timer = setTimeout(() => {
-            console.log(buffer);
+          timer = setTimeout(async () => {
+            // console.log(buffer);
+            translation = await translateText(buffer);
+            console.log(translation);
+
             buffer = "";
             activeTimer = false;
           }, 3000);
