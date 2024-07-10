@@ -2,7 +2,8 @@ const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 80 });
 const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
-const { translateText } = require('./translate');
+// const { translateText } = require('./translate');
+const translateText = require('./translate.js');
 
 const request = {
   config: {
@@ -31,7 +32,6 @@ wss.on('connection', function connection(ws) {
             // console.log(buffer);
             translation = await translateText(buffer);
             console.log(translation);
-
             buffer = "";
             activeTimer = false;
           }, 3000);
@@ -46,7 +46,7 @@ wss.on('connection', function connection(ws) {
         }
       }
       else {
-        console.log("Unidentified output");
+        console.log("Unidentified output:", data);
       }
     });
 

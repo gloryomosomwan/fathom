@@ -8,4 +8,5 @@ async function translateText(text) {
   return translations;
 }
 
-module.exports = { translateText };
+// module.exports = { translateText };
+module.exports = translateText;
