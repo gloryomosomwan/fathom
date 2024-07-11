@@ -46,6 +46,16 @@ function createWebSockets() {
 
   websocket.onmessage = (e) => {
     console.log("Message received:", e.data);
+
+    const ab = e.data;
+    const blbo = new Blob([ab], { type: 'audio/mpeg' });
+
+    speechURL = URL.createObjectURL(blbo);
+    // audioElement = document.getElementById('audio');
+    // audioElement.src = speechURL;
+    let audio = new Audio(speechURL);
+    // audio.src = speechURL;
+    audio.play();
   };
 
   websocket.onerror = (e) => {
@@ -60,7 +70,7 @@ function createMediaRecorder(stream, websocket) {
   console.log("Media recorder state: ", recorder.state);
   recorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
-      console.log("Data sent: ", e.data);
+      // console.log("Data sent: ", e.data);
       websocket.send(e.data);
     }
   };
