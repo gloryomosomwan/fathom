@@ -46,15 +46,11 @@ function createWebSockets() {
 
   websocket.onmessage = (e) => {
     console.log("Message received:", e.data);
-
-    const ab = e.data;
-    const blbo = new Blob([ab], { type: 'audio/mpeg' });
-
-    speechURL = URL.createObjectURL(blbo);
+    const buffer = e.data;
+    const blob = new Blob([buffer], { type: 'audio/mpeg' });
+    url = URL.createObjectURL(blob);
     // audioElement = document.getElementById('audio');
-    // audioElement.src = speechURL;
-    let audio = new Audio(speechURL);
-    // audio.src = speechURL;
+    let audio = new Audio(url);
     audio.play();
   };
 

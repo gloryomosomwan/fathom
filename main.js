@@ -32,14 +32,10 @@ wss.on('connection', function connection(ws) {
             translation = await translate(buffer);
             console.log(translation);
             speech = await synthesize(translation);
-
             // speechBlob = new Blob(speechData);
-            const speechBlob = Buffer.from(speech, 'binary');
             // speechBlob = new Blob([speechData], { type: 'audio/mpeg' });
-
-            // send raw data to client
+            const speechBlob = Buffer.from(speech, 'binary');
             ws.send(speechBlob);
-
             buffer = "";
             activeTimer = false;
           }, 3000);
