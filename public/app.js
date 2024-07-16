@@ -15,6 +15,7 @@ const configuration = {
 let peerConnection = null;
 let localStream = null;
 let remoteStream = null;
+let dataChannel = null;
 let roomDialog = null;
 let roomId = null;
 
@@ -34,6 +35,20 @@ async function createRoom() {
 
   console.log('Create PeerConnection with configuration: ', configuration);
   peerConnection = new RTCPeerConnection(configuration);
+
+  dataChannel = peerConnection.createDataChannel('sendDataChannel');
+
+  dataChannel.addEventListener('open', event => {
+    console.log('Data channel is open');
+  });
+
+  dataChannel.addEventListener('close', event => {
+    console.log('Data channel is closed');
+  });
+
+  dataChannel.addEventListener('message', event => {
+    console.log('Message received:', event.data);
+  });
 
   registerPeerConnectionListeners();
 
@@ -189,6 +204,23 @@ async function joinRoomById(roomId) {
     });
     // Listening for remote ICE candidates above
   }
+  peerConnection.addEventListener('datachannel', event => {
+    console.log('Got data channel');
+    dataChannel = event.channel;
+    dataChannel.send('Hello!');
+  });
+
+  dataChannel.addEventListener('open', event => {
+    console.log('Data channel is open');
+  });
+
+  dataChannel.addEventListener('close', event => {
+    console.log('Data channel is closed');
+  });
+
+  dataChannel.addEventListener('message', event => {
+    console.log('Message received:', event.data);
+  });
 }
 
 async function openUserMedia(e) {
