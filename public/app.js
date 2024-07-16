@@ -37,18 +37,7 @@ async function createRoom() {
   peerConnection = new RTCPeerConnection(configuration);
 
   dataChannel = peerConnection.createDataChannel('sendDataChannel');
-
-  dataChannel.addEventListener('open', event => {
-    console.log('Data channel is open');
-  });
-
-  dataChannel.addEventListener('close', event => {
-    console.log('Data channel is closed');
-  });
-
-  dataChannel.addEventListener('message', event => {
-    console.log('Message received:', event.data);
-  });
+  registerDataChannelListeners();
 
   registerPeerConnectionListeners();
 
@@ -151,6 +140,12 @@ async function joinRoomById(roomId) {
     console.log('Create PeerConnection with configuration: ', configuration);
     peerConnection = new RTCPeerConnection(configuration);
     registerPeerConnectionListeners();
+    peerConnection.addEventListener('datachannel', event => {
+      console.log('Got data channel');
+      dataChannel = event.channel;
+      dataChannel.send('ping');
+      registerDataChannelListeners();
+    });
     localStream.getTracks().forEach(track => {
       peerConnection.addTrack(track, localStream);
     });
@@ -204,23 +199,6 @@ async function joinRoomById(roomId) {
     });
     // Listening for remote ICE candidates above
   }
-  peerConnection.addEventListener('datachannel', event => {
-    console.log('Got data channel');
-    dataChannel = event.channel;
-    dataChannel.send('Hello!');
-  });
-
-  dataChannel.addEventListener('open', event => {
-    console.log('Data channel is open');
-  });
-
-  dataChannel.addEventListener('close', event => {
-    console.log('Data channel is closed');
-  });
-
-  dataChannel.addEventListener('message', event => {
-    console.log('Message received:', event.data);
-  });
 }
 
 async function openUserMedia(e) {
@@ -311,14 +289,11 @@ function createWebSockets() {
     console.log("Disconnected from WebSocket server");
   };
 
-  websocket.onmessage = (e) => {
-    console.log("Message received:", e.data);
-    const buffer = e.data;
-    const blob = new Blob([buffer], { type: 'audio/mpeg' });
-    url = URL.createObjectURL(blob);
-    // audioElement = document.getElementById('audio');
-    let audio = new Audio(url);
-    audio.play();
+  websocket.onmessage = async (e) => {
+    console.log("Message received from WebSocket server:", e.data);
+    dataChannel.send('hello from the other side');
+    let ab = await e.data.arrayBuffer();
+    dataChannel.send(ab);
   };
 
   websocket.onerror = (e) => {
@@ -343,6 +318,22 @@ function createMediaRecorder(stream, websocket) {
   recorder.onerror = (e) => {
     console.log("Recorder error: ", e.data);
   };
+}
+
+function registerDataChannelListeners() {
+  dataChannel.addEventListener('open', event => {
+    console.log('Data channel is open');
+  });
+  dataChannel.addEventListener('close', event => {
+    console.log('Data channel is closed');
+  });
+  dataChannel.addEventListener('message', event => {
+    console.log('Message received from DataChannel:', event.data);
+    const blob = new Blob([event.data], { type: 'audio/mpeg' });
+    url = URL.createObjectURL(blob);
+    let audio = new Audio(url);
+    audio.play();
+  });
 }
 
 init();
