@@ -41,6 +41,13 @@ async function createRoom() {
     peerConnection.addTrack(track, localStream);
   });
 
+  const websocket = createWebSockets();
+  let audioTrack = localStream.getAudioTracks()[0];
+  const audioOnlyStream = new MediaStream();
+  audioOnlyStream.addTrack(audioTrack);
+
+  createMediaRecorder(audioOnlyStream, websocket);
+
   // Code for collecting ICE candidates below
   const callerCandidatesCollection = roomRef.collection('callerCandidates');
 
@@ -69,7 +76,7 @@ async function createRoom() {
   roomId = roomRef.id;
   console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`);
   document.querySelector(
-      '#currentRoom').innerText = `Current room is ${roomRef.id} - You are the caller!`;
+    '#currentRoom').innerText = `Current room is ${roomRef.id} - You are the caller!`;
   // Code for creating a room above
 
   peerConnection.addEventListener('track', event => {
@@ -109,13 +116,13 @@ function joinRoom() {
   document.querySelector('#joinBtn').disabled = true;
 
   document.querySelector('#confirmJoinBtn').
-      addEventListener('click', async () => {
-        roomId = document.querySelector('#room-id').value;
-        console.log('Join room: ', roomId);
-        document.querySelector(
-            '#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
-        await joinRoomById(roomId);
-      }, {once: true});
+    addEventListener('click', async () => {
+      roomId = document.querySelector('#room-id').value;
+      console.log('Join room: ', roomId);
+      document.querySelector(
+        '#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
+      await joinRoomById(roomId);
+    }, { once: true });
   roomDialog.open();
 }
 
@@ -186,7 +193,7 @@ async function joinRoomById(roomId) {
 
 async function openUserMedia(e) {
   const stream = await navigator.mediaDevices.getUserMedia(
-      {video: true, audio: true});
+    { video: true, audio: true });
   document.querySelector('#localVideo').srcObject = stream;
   localStream = stream;
   remoteStream = new MediaStream();
@@ -242,7 +249,7 @@ async function hangUp(e) {
 function registerPeerConnectionListeners() {
   peerConnection.addEventListener('icegatheringstatechange', () => {
     console.log(
-        `ICE gathering state changed: ${peerConnection.iceGatheringState}`);
+      `ICE gathering state changed: ${peerConnection.iceGatheringState}`);
   });
 
   peerConnection.addEventListener('connectionstatechange', () => {
@@ -255,8 +262,55 @@ function registerPeerConnectionListeners() {
 
   peerConnection.addEventListener('iceconnectionstatechange ', () => {
     console.log(
-        `ICE connection state change: ${peerConnection.iceConnectionState}`);
+      `ICE connection state change: ${peerConnection.iceConnectionState}`);
   });
+}
+
+function createWebSockets() {
+  // const wsUri = "ws://35.184.118.175";
+  const wsUri = "ws://127.0.0.1";
+  const websocket = new WebSocket(wsUri);
+
+  websocket.onopen = (e) => {
+    console.log("Connected");
+  };
+
+  websocket.onclose = (e) => {
+    console.log("Disconnected");
+  };
+
+  websocket.onmessage = (e) => {
+    console.log("Message received:", e.data);
+    const buffer = e.data;
+    const blob = new Blob([buffer], { type: 'audio/mpeg' });
+    url = URL.createObjectURL(blob);
+    // audioElement = document.getElementById('audio');
+    let audio = new Audio(url);
+    audio.play();
+  };
+
+  websocket.onerror = (e) => {
+    console.log("WebSocket error: ", e.data);
+  };
+  return websocket;
+}
+
+function createMediaRecorder(stream, websocket) {
+  const recorder = new MediaRecorder(stream);
+  recorder.start(1000);
+  console.log("Media recorder state: ", recorder.state);
+  recorder.ondataavailable = (e) => {
+    if (e.data.size > 0) {
+      // console.log("Data sent: ", e.data);
+      websocket.send(e.data);
+    }
+  };
+  recorder.onstop = (e) => {
+    console.log("Recorder has stopped");
+  };
+  recorder.onerror = (e) => {
+    console.log("Recorder error: ", e.data);
+  };
 }
 
 init();

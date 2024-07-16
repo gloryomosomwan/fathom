@@ -29,9 +29,9 @@ wss.on('connection', function connection(ws) {
         if (!activeTimer) {
           activeTimer = true;
           timer = setTimeout(async () => {
-            translation = await translate(buffer);
+            let translation = await translate(buffer);
             console.log(translation);
-            speech = await synthesize(translation);
+            let speech = await synthesize(translation);
             // speechBlob = new Blob(speechData);
             // speechBlob = new Blob([speechData], { type: 'audio/mpeg' });
             const speechBlob = Buffer.from(speech, 'binary');
