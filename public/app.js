@@ -272,11 +272,11 @@ function createWebSockets() {
   const websocket = new WebSocket(wsUri);
 
   websocket.onopen = (e) => {
-    console.log("Connected");
+    console.log("Connected to WebSocket server");
   };
 
   websocket.onclose = (e) => {
-    console.log("Disconnected");
+    console.log("Disconnected from WebSocket server");
   };
 
   websocket.onmessage = (e) => {
