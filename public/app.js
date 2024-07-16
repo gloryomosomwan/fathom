@@ -150,6 +150,13 @@ async function joinRoomById(roomId) {
       peerConnection.addTrack(track, localStream);
     });
 
+    const websocket = createWebSockets();
+    let audioTrack = localStream.getAudioTracks()[0];
+    const audioOnlyStream = new MediaStream();
+    audioOnlyStream.addTrack(audioTrack);
+
+    createMediaRecorder(audioOnlyStream, websocket);
+
     // Code for collecting ICE candidates below
     const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
     peerConnection.addEventListener('icecandidate', event => {
@@ -261,15 +268,12 @@ function registerPeerConnectionListeners() {
     console.log(
       `ICE gathering state changed: ${peerConnection.iceGatheringState}`);
   });
-
   peerConnection.addEventListener('connectionstatechange', () => {
     console.log(`Connection state change: ${peerConnection.connectionState}`);
   });
-
   peerConnection.addEventListener('signalingstatechange', () => {
     console.log(`Signaling state change: ${peerConnection.signalingState}`);
   });
-
   peerConnection.addEventListener('iceconnectionstatechange ', () => {
     console.log(
       `ICE connection state change: ${peerConnection.iceConnectionState}`);
@@ -280,22 +284,17 @@ function createWebSockets() {
   // const wsUri = "ws://35.184.118.175";
   const wsUri = "ws://127.0.0.1";
   const websocket = new WebSocket(wsUri);
-
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
   };
-
   websocket.onclose = (e) => {
     console.log("Disconnected from WebSocket server");
   };
-
   websocket.onmessage = async (e) => {
     console.log("Message received from WebSocket server:", e.data);
-    dataChannel.send('hello from the other side');
     let ab = await e.data.arrayBuffer();
     dataChannel.send(ab);
   };
-
   websocket.onerror = (e) => {
     console.log("WebSocket error: ", e.data);
   };
@@ -308,7 +307,6 @@ function createMediaRecorder(stream, websocket) {
   console.log("Media recorder state: ", recorder.state);
   recorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
-      // console.log("Data sent: ", e.data);
       websocket.send(e.data);
     }
   };
