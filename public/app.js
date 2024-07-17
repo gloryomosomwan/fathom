@@ -20,6 +20,7 @@ let roomDialog = null;
 let roomId = null;
 let websocket = null;
 let mediaRecorder = null;
+let translating = true;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -343,8 +344,18 @@ function toggleVideo() {
 }
 
 function toggleTranslate() {
-  // The media recorder is stopped and it closes the websocket on its own 
-  mediaRecorder.stop();
+  if (translating) {
+    console.log('Translation started');
+    // The media recorder is stopped and it closes the websocket on its own 
+    mediaRecorder.stop();
+    translating = false;
+  }
+  else {
+    console.log('Translation started');
+    createWebSockets();
+    createMediaRecorder();
+    translating = true;
+  }
 }
 
 init();
