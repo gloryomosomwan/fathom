@@ -24,9 +24,29 @@ const server = http.createServer({});
 const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws) {
   console.log('WebSocket connected');
+  recognizeStream = startRecognizeStream(ws);
+  ws.on('message', function incoming(data) {
+    if (data.toString() == 'english') {
+      console.log('english!');
+    }
+    else {
+      recognizeStream.write(data);
+    }
+  });
+  ws.onclose = (e) => {
+    console.log("Disconnected");
+  };
+});
+
+wss.on('close', () => {
+  console.log('WebSocket Server closed');
+});
+
+function startRecognizeStream(socket) {
   let activeTimer = false;
   let buffer = "";
   let timer = null;
+  console.log('streaming started...');
   const recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
@@ -42,7 +62,7 @@ wss.on('connection', function connection(ws) {
             console.log(translation);
             let speech = await synthesize(translation);
             const speechBlob = Buffer.from(speech, 'binary');
-            ws.send(speechBlob);
+            socket.send(speechBlob);
             buffer = "";
             activeTimer = false;
           }, 3000);
@@ -61,23 +81,8 @@ wss.on('connection', function connection(ws) {
         // console.log("Unidentified output:", data);
       }
     });
-
-  ws.on('message', function incoming(data) {
-    if (data.toString() == 'english') {
-      console.log('english!');
-    }
-    else {
-      recognizeStream.write(data);
-    }
-  });
-
-  ws.onclose = (e) => {
-    console.log("Disconnected");
-  };
-});
-wss.on('close', () => {
-  console.log('WebSocket Server closed');
-});
+  return recognizeStream;
+}
 
 // server.listen(443);
 server.listen(80);
