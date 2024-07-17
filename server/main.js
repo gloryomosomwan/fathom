@@ -63,7 +63,12 @@ wss.on('connection', function connection(ws) {
     });
 
   ws.on('message', function incoming(data) {
-    recognizeStream.write(data);
+    if (data.toString() == 'Hello!') {
+      console.log('Hello!');
+    }
+    else {
+      recognizeStream.write(data);
+    }
   });
 
   ws.onclose = (e) => {

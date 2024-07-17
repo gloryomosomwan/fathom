@@ -290,6 +290,7 @@ function createWebSockets() {
   websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
+    websocket.send('Hello!');
   };
   websocket.onclose = (e) => {
     console.log("Disconnected from WebSocket server");
