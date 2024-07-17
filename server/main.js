@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
@@ -14,10 +15,12 @@ const request = {
   }
 };
 
-const server = https.createServer({
-  cert: fs.readFileSync('fullchain.pem'),
-  key: fs.readFileSync('privkey.pem')
-});
+// const server = https.createServer({
+//   cert: fs.readFileSync('fullchain.pem'),
+//   key: fs.readFileSync('privkey.pem')
+// });
+
+const server = http.createServer({});
 
 const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws) {
@@ -68,4 +71,5 @@ wss.on('connection', function connection(ws) {
   };
 });
 
-server.listen(443);
+// server.listen(443);
+server.listen(80);

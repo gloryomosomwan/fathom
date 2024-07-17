@@ -24,6 +24,7 @@ function init() {
   document.querySelector('#hangupBtn').addEventListener('click', hangUp);
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
+  document.querySelector('#videoBtn').addEventListener('click', toggleVideo);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
 
@@ -281,8 +282,8 @@ function registerPeerConnectionListeners() {
 }
 
 function createWebSockets() {
-  const wsUri = "wss://www.fathomapp.xyz";
-  // const wsUri = "ws://127.0.0.1";
+  // const wsUri = "wss://www.fathomapp.xyz";
+  const wsUri = "ws://127.0.0.1";
   const websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
@@ -332,6 +333,11 @@ function registerDataChannelListeners() {
     let audio = new Audio(url);
     audio.play();
   });
+}
+
+function toggleVideo() {
+  localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
+  console.log('Video button pressed');
 }
 
 init();
