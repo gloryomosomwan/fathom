@@ -28,7 +28,7 @@ function init() {
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
   document.querySelector('#videoBtn').addEventListener('click', toggleVideo);
-  document.querySelector('#translateBtn').addEventListener('click', toggleTranslate);
+  document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
 
@@ -343,7 +343,7 @@ function toggleVideo() {
   localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
 }
 
-function toggleTranslate() {
+function toggleTranslation() {
   if (translating) {
     console.log('Translation stopped');
     // The media recorder is stopped and it closes the websocket on its own 
