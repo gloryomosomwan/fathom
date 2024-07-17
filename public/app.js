@@ -345,7 +345,7 @@ function toggleVideo() {
 
 function toggleTranslate() {
   if (translating) {
-    console.log('Translation started');
+    console.log('Translation stopped');
     // The media recorder is stopped and it closes the websocket on its own 
     mediaRecorder.stop();
     translating = false;
