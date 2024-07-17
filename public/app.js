@@ -28,6 +28,7 @@ function init() {
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
   document.querySelector('#videoBtn').addEventListener('click', toggleVideo);
+  document.querySelector('#muteBtn').addEventListener('click', toggleMute);
   document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
@@ -218,6 +219,7 @@ async function openUserMedia(e) {
   document.querySelector('#joinBtn').disabled = false;
   document.querySelector('#createBtn').disabled = false;
   document.querySelector('#videoBtn').disabled = false;
+  document.querySelector('#muteBtn').disabled = false;
   document.querySelector('#hangupBtn').disabled = false;
 }
 
@@ -341,6 +343,10 @@ function registerDataChannelListeners() {
 
 function toggleVideo() {
   localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
+}
+
+function toggleMute() {
+  localStream.getAudioTracks()[0].enabled = !(localStream.getAudioTracks()[0].enabled);
 }
 
 function toggleTranslation() {
