@@ -63,8 +63,8 @@ wss.on('connection', function connection(ws) {
     });
 
   ws.on('message', function incoming(data) {
-    if (data.toString() == 'Hello!') {
-      console.log('Hello!');
+    if (data.toString() == 'english') {
+      console.log('english!');
     }
     else {
       recognizeStream.write(data);
