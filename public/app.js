@@ -281,8 +281,8 @@ function registerPeerConnectionListeners() {
 }
 
 function createWebSockets() {
-  // const wsUri = "ws://35.184.118.175";
-  const wsUri = "ws://127.0.0.1";
+  const wsUri = "wss://www.fathomapp.xyz";
+  // const wsUri = "ws://127.0.0.1";
   const websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");

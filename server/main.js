@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
-const wss = new WebSocket.Server({ port: 80 });
+const https = require('https');
+const fs = require('fs');
 const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
 const translate = require('./translate.js');
@@ -13,6 +14,12 @@ const request = {
   }
 };
 
+const server = https.createServer({
+  cert: fs.readFileSync('fullchain.pem'),
+  key: fs.readFileSync('privkey.pem')
+});
+
+const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws) {
   console.log('WebSocket connected');
   let activeTimer = false;
@@ -24,7 +31,6 @@ wss.on('connection', function connection(ws) {
     .on('data', data => {
       if (data.results[0] && data.results[0].alternatives[0] && (data.results[0].alternatives[0].transcript != "")) {
         result = data.results[0].alternatives[0].transcript;
-        // buffer = buffer + result + " ";
         buffer = buffer + result;
         if (!activeTimer) {
           activeTimer = true;
@@ -32,8 +38,6 @@ wss.on('connection', function connection(ws) {
             let translation = await translate(buffer);
             console.log(translation);
             let speech = await synthesize(translation);
-            // speechBlob = new Blob(speechData);
-            // speechBlob = new Blob([speechData], { type: 'audio/mpeg' });
             const speechBlob = Buffer.from(speech, 'binary');
             ws.send(speechBlob);
             buffer = "";
@@ -63,3 +67,5 @@ wss.on('connection', function connection(ws) {
     console.log("Disconnected");
   };
 });
+
+server.listen(443);
