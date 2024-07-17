@@ -70,6 +70,9 @@ wss.on('connection', function connection(ws) {
     console.log("Disconnected");
   };
 });
+wss.on('close', () => {
+  console.log('WebSocket closed (server side)');
+});
 
 // server.listen(443);
 server.listen(80);

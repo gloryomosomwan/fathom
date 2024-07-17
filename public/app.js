@@ -18,6 +18,8 @@ let remoteStream = null;
 let dataChannel = null;
 let roomDialog = null;
 let roomId = null;
+let websocket = null;
+let mediaRecorder = null;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -25,6 +27,7 @@ function init() {
   document.querySelector('#createBtn').addEventListener('click', createRoom);
   document.querySelector('#joinBtn').addEventListener('click', joinRoom);
   document.querySelector('#videoBtn').addEventListener('click', toggleVideo);
+  document.querySelector('#translateBtn').addEventListener('click', toggleTranslate);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
 
@@ -46,12 +49,8 @@ async function createRoom() {
     peerConnection.addTrack(track, localStream);
   });
 
-  const websocket = createWebSockets();
-  let audioTrack = localStream.getAudioTracks()[0];
-  const audioOnlyStream = new MediaStream();
-  audioOnlyStream.addTrack(audioTrack);
-
-  createMediaRecorder(audioOnlyStream, websocket);
+  createWebSockets();
+  createMediaRecorder();
 
   // Code for collecting ICE candidates below
   const callerCandidatesCollection = roomRef.collection('callerCandidates');
@@ -286,7 +285,7 @@ function registerPeerConnectionListeners() {
 function createWebSockets() {
   // const wsUri = "wss://www.fathomapp.xyz";
   const wsUri = "ws://127.0.0.1";
-  const websocket = new WebSocket(wsUri);
+  websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
   };
@@ -301,11 +300,13 @@ function createWebSockets() {
   websocket.onerror = (e) => {
     console.log("WebSocket error: ", e.data);
   };
-  return websocket;
 }
 
-function createMediaRecorder(stream, websocket) {
-  const recorder = new MediaRecorder(stream);
+function createMediaRecorder() {
+  let audioTrack = localStream.getAudioTracks()[0];
+  const audioOnlyStream = new MediaStream();
+  audioOnlyStream.addTrack(audioTrack);
+  const recorder = new MediaRecorder(audioOnlyStream);
   recorder.start(1000);
   console.log("Media recorder state: ", recorder.state);
   recorder.ondataavailable = (e) => {
@@ -319,6 +320,7 @@ function createMediaRecorder(stream, websocket) {
   recorder.onerror = (e) => {
     console.log("Recorder error: ", e.data);
   };
+  mediaRecorder = recorder;
 }
 
 function registerDataChannelListeners() {
@@ -339,6 +341,11 @@ function registerDataChannelListeners() {
 
 function toggleVideo() {
   localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
+}
+
+function toggleTranslate() {
+  // Turn off recorder
+  // Close websocket
 }
 
 init();
