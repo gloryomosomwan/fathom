@@ -370,14 +370,7 @@ function toggleMute() {
   }
 }
 
-function toggleTranslation() {
-  if (translating) {
-    stopTranslation();
-  }
-  else {
-    startTranslation();
-  }
-}
+function toggleTranslation() { translating ? stopTranslation() : startTranslation(); }
 
 function stopTranslation() {
   console.log('Translation stopped');
