@@ -6,6 +6,7 @@ const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
 const translate = require('./translate.js');
 const synthesize = require('./synthesize.js');
+let recognizeStream = null;
 
 const request = {
   config: {
@@ -24,10 +25,10 @@ const server = http.createServer({});
 const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws) {
   console.log('WebSocket connected');
-  recognizeStream = startRecognizeStream(ws);
   ws.on('message', function incoming(data) {
     if (data.toString() == 'english') {
       console.log('english!');
+      startRecognizeStream(ws);
     }
     else {
       recognizeStream.write(data);
@@ -47,7 +48,7 @@ function startRecognizeStream(socket) {
   let buffer = "";
   let timer = null;
   console.log('streaming started...');
-  const recognizeStream = client
+  recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
     .on('close', () => console.log('Closed recognizeStream'))
@@ -81,7 +82,6 @@ function startRecognizeStream(socket) {
         // console.log("Unidentified output:", data);
       }
     });
-  return recognizeStream;
 }
 
 // server.listen(443);
