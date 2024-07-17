@@ -221,6 +221,7 @@ async function openUserMedia(e) {
   document.querySelector('#cameraBtn').disabled = true;
   document.querySelector('#joinBtn').disabled = false;
   document.querySelector('#createBtn').disabled = false;
+  document.querySelector('#videoBtn').disabled = false;
   document.querySelector('#hangupBtn').disabled = false;
 }
 
@@ -243,6 +244,7 @@ async function hangUp(e) {
   document.querySelector('#cameraBtn').disabled = false;
   document.querySelector('#joinBtn').disabled = true;
   document.querySelector('#createBtn').disabled = true;
+  document.querySelector('#videoBtn').disabled = true;
   document.querySelector('#hangupBtn').disabled = true;
   document.querySelector('#currentRoom').innerText = '';
 
@@ -337,7 +339,6 @@ function registerDataChannelListeners() {
 
 function toggleVideo() {
   localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
-  console.log('Video button pressed');
 }
 
 init();
