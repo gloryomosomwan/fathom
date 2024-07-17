@@ -21,6 +21,7 @@ let roomId = null;
 let websocket = null;
 let mediaRecorder = null;
 let translating = true;
+let muted = false;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -346,22 +347,50 @@ function toggleVideo() {
 }
 
 function toggleMute() {
-  localStream.getAudioTracks()[0].enabled = !(localStream.getAudioTracks()[0].enabled);
+  // Unmute
+  if (muted) {
+    localStream.getAudioTracks()[0].enabled = true;
+    startTranslation();
+    document.querySelector('#translateBtn').disabled = false;
+    console.log('Unmuted');
+    muted = false;
+  }
+  // Mute
+  else {
+    localStream.getAudioTracks()[0].enabled = false;
+    if (translating) {
+      stopTranslation();
+    }
+    else {
+      console.log('Muted but translation already inactive');
+    }
+    document.querySelector('#translateBtn').disabled = true;
+    console.log('Muted');
+    muted = true;
+  }
 }
 
 function toggleTranslation() {
   if (translating) {
-    console.log('Translation stopped');
-    // The media recorder is stopped and it closes the websocket on its own 
-    mediaRecorder.stop();
-    translating = false;
+    stopTranslation();
   }
   else {
-    console.log('Translation started');
-    createWebSockets();
-    createMediaRecorder();
-    translating = true;
+    startTranslation();
   }
+}
+
+function stopTranslation() {
+  console.log('Translation stopped');
+  // The media recorder is stopped and it closes the websocket on its own 
+  mediaRecorder.stop();
+  translating = false;
+}
+
+function startTranslation() {
+  console.log('Translation started');
+  createWebSockets();
+  createMediaRecorder();
+  translating = true;
 }
 
 init();
