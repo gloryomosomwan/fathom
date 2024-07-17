@@ -297,6 +297,7 @@ function createWebSockets() {
   websocket.onmessage = async (e) => {
     console.log("Message received from WebSocket server:", e.data);
     let ab = await e.data.arrayBuffer();
+    playAudio(ab);
     dataChannel.send(ab);
   };
   websocket.onerror = (e) => {
@@ -335,10 +336,7 @@ function registerDataChannelListeners() {
   });
   dataChannel.addEventListener('message', event => {
     console.log('Message received from DataChannel:', event.data);
-    const blob = new Blob([event.data], { type: 'audio/mpeg' });
-    url = URL.createObjectURL(blob);
-    let audio = new Audio(url);
-    audio.play();
+    playAudio(event.data);
   });
 }
 
@@ -384,6 +382,13 @@ function startTranslation() {
   createWebSockets();
   createMediaRecorder();
   translating = true;
+}
+
+function playAudio(data) {
+  const blob = new Blob([data], { type: 'audio/mpeg' });
+  url = URL.createObjectURL(blob);
+  let audio = new Audio(url);
+  audio.play();
 }
 
 init();
