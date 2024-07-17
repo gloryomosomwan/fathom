@@ -19,7 +19,6 @@ const request = {
 //   cert: fs.readFileSync('fullchain.pem'),
 //   key: fs.readFileSync('privkey.pem')
 // });
-
 const server = http.createServer({});
 
 const wss = new WebSocket.Server({ server });
@@ -31,6 +30,7 @@ wss.on('connection', function connection(ws) {
   const recognizeStream = client
     .streamingRecognize(request)
     .on('error', console.error)
+    .on('close', () => console.log('Closed recognizeStream'))
     .on('data', data => {
       if (data.results[0] && data.results[0].alternatives[0] && (data.results[0].alternatives[0].transcript != "")) {
         result = data.results[0].alternatives[0].transcript;
@@ -71,7 +71,7 @@ wss.on('connection', function connection(ws) {
   };
 });
 wss.on('close', () => {
-  console.log('WebSocket closed (server side)');
+  console.log('WebSocket Server closed');
 });
 
 // server.listen(443);

@@ -316,6 +316,7 @@ function createMediaRecorder() {
   };
   recorder.onstop = (e) => {
     console.log("Recorder has stopped");
+    websocket.close();
   };
   recorder.onerror = (e) => {
     console.log("Recorder error: ", e.data);
@@ -344,8 +345,8 @@ function toggleVideo() {
 }
 
 function toggleTranslate() {
-  // Turn off recorder
-  // Close websocket
+  // The media recorder is stopped and it closes the websocket on its own 
+  mediaRecorder.stop();
 }
 
 init();
