@@ -150,12 +150,8 @@ async function joinRoomById(roomId) {
       peerConnection.addTrack(track, localStream);
     });
 
-    const websocket = createWebSockets();
-    let audioTrack = localStream.getAudioTracks()[0];
-    const audioOnlyStream = new MediaStream();
-    audioOnlyStream.addTrack(audioTrack);
-
-    createMediaRecorder(audioOnlyStream, websocket);
+    createWebSockets();
+    createMediaRecorder();
 
     // Code for collecting ICE candidates below
     const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
@@ -225,6 +221,8 @@ async function openUserMedia(e) {
 }
 
 async function hangUp(e) {
+  mediaRecorder.stop();
+
   const tracks = document.querySelector('#localVideo').srcObject.getTracks();
   tracks.forEach(track => {
     track.stop();
