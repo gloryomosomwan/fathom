@@ -404,15 +404,16 @@ function playAudio(data) {
   audio.play();
 }
 
-function togglePlayback() { playback ? playback = false : playback = true; }
 
-// function togglePlayback() {
-//   if (playback) {
-//     playback = false;
-//   }
-//   else {
-//     playback = true;
-//   }
-// }
+function togglePlayback() {
+  if (playback) {
+    playback = false;
+    document.querySelector('#playbackBtnLabel').innerText = 'Playback: Off';
+  }
+  else {
+    playback = true;
+    document.querySelector('#playbackBtnLabel').innerText = 'Playback: On';
+  }
+}
 
 init();
