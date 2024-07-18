@@ -363,8 +363,9 @@ function toggleMute() {
     localStream.getAudioTracks()[0].enabled = true;
     startTranslation();
     document.querySelector('#translateBtn').disabled = false;
-    console.log('Unmuted');
+    document.querySelector('#muteBtnLabel').innerText = 'Mute';
     muted = false;
+    console.log('Unmuted');
   }
   // Mute
   else {
@@ -376,8 +377,9 @@ function toggleMute() {
       console.log('Muted but translation already inactive');
     }
     document.querySelector('#translateBtn').disabled = true;
-    console.log('Muted');
+    document.querySelector('#muteBtnLabel').innerText = 'Unmute';
     muted = true;
+    console.log('Muted');
   }
 }
 
