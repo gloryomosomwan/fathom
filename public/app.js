@@ -324,9 +324,7 @@ function createMediaRecorder() {
   const recorder = new MediaRecorder(audioOnlyStream);
   recorder.start(1000);
   // console.log("Media recorder state: ", recorder.state);
-  recorder.onstart((e) => {
-    console.log('Recorder has started');
-  });
+  recorder.onstart = (e) => console.log('Recorder has started');
   recorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
       websocket.send(e.data);
