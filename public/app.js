@@ -387,6 +387,7 @@ function stopTranslation() {
   console.log('Translation stopped');
   // The media recorder is stopped and it closes the websocket on its own 
   mediaRecorder.stop();
+  document.querySelector('#translationBtnLabel').innerText = 'Translation: Off';
   translating = false;
 }
 
@@ -394,6 +395,7 @@ function startTranslation() {
   console.log('Translation started');
   createWebSockets();
   createMediaRecorder();
+  document.querySelector('#translationBtnLabel').innerText = 'Translation: On';
   translating = true;
 }
 
@@ -403,7 +405,6 @@ function playAudio(data) {
   let audio = new Audio(url);
   audio.play();
 }
-
 
 function togglePlayback() {
   if (playback) {
