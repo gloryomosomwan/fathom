@@ -287,11 +287,11 @@ function registerPeerConnectionListeners() {
 function createWebSockets() {
   // const wsUri = "wss://www.fathomapp.xyz";
   const wsUri = "ws://127.0.0.1";
-  let language = document.getElementById('language-select').value;
+  // let language = document.getElementById('language-select').value;
   websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
-    websocket.send(language);
+    websocket.send('start');
   };
   websocket.onclose = (e) => {
     console.log("Disconnected from WebSocket server");
