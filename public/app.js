@@ -323,7 +323,10 @@ function createMediaRecorder() {
   audioOnlyStream.addTrack(audioTrack);
   const recorder = new MediaRecorder(audioOnlyStream);
   recorder.start(1000);
-  console.log("Media recorder state: ", recorder.state);
+  // console.log("Media recorder state: ", recorder.state);
+  recorder.onstart((e) => {
+    console.log('Recorder has started');
+  });
   recorder.ondataavailable = (e) => {
     if (e.data.size > 0) {
       websocket.send(e.data);
@@ -333,6 +336,7 @@ function createMediaRecorder() {
   recorder.onstop = (e) => {
     console.log("Recorder has stopped");
     websocket.close();
+    // console.log('Recorder closed websocket')
   };
   recorder.onerror = (e) => {
     console.log("Recorder error: ", e.data);
