@@ -27,6 +27,7 @@ wss.on('connection', function connection(ws) {
           encoding: 'WEBM_OPUS',
           sampleRateHertz: 16000,
           languageCode: 'pt-BR',
+          model: 'telephony'
         }
       };
 
@@ -40,6 +41,7 @@ wss.on('connection', function connection(ws) {
           encoding: 'WEBM_OPUS',
           sampleRateHertz: 16000,
           languageCode: 'en-US',
+          model: 'telephony'
         }
       };
 
