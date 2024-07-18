@@ -22,6 +22,7 @@ let websocket = null;
 let mediaRecorder = null;
 let translating = true;
 let muted = false;
+let playback = true;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -31,12 +32,15 @@ function init() {
   document.querySelector('#videoBtn').addEventListener('click', toggleVideo);
   document.querySelector('#muteBtn').addEventListener('click', toggleMute);
   document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
+  document.querySelector('#playbackBtn').addEventListener('click', togglePlayback);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
 }
 
 async function createRoom() {
   document.querySelector('#createBtn').disabled = true;
   document.querySelector('#joinBtn').disabled = true;
+  document.querySelector('#translateBtn').disabled = false;
+  document.querySelector('#playbackBtn').disabled = false;
   const db = firebase.firestore();
   const roomRef = await db.collection('rooms').doc();
 
@@ -246,6 +250,9 @@ async function hangUp(e) {
   document.querySelector('#joinBtn').disabled = true;
   document.querySelector('#createBtn').disabled = true;
   document.querySelector('#videoBtn').disabled = true;
+  document.querySelector('#muteBtn').disabled = true;
+  document.querySelector('#translateBtn').disabled = true;
+  document.querySelector('#playbackBtn').disabled = true;
   document.querySelector('#hangupBtn').disabled = true;
   document.querySelector('#currentRoom').innerText = '';
 
@@ -299,7 +306,10 @@ function createWebSockets() {
   websocket.onmessage = async (e) => {
     console.log("Message received from WebSocket server:", e.data);
     let ab = await e.data.arrayBuffer();
-    playAudio(ab);
+    if (playback) {
+      console.log('playing audio back');
+      playAudio(ab);
+    }
     dataChannel.send(ab);
   };
   websocket.onerror = (e) => {
@@ -393,5 +403,16 @@ function playAudio(data) {
   let audio = new Audio(url);
   audio.play();
 }
+
+function togglePlayback() { playback ? playback = false : playback = true; }
+
+// function togglePlayback() {
+//   if (playback) {
+//     playback = false;
+//   }
+//   else {
+//     playback = true;
+//   }
+// }
 
 init();
