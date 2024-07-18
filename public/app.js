@@ -281,6 +281,10 @@ function registerPeerConnectionListeners() {
   });
   peerConnection.addEventListener('connectionstatechange', () => {
     console.log(`Connection state change: ${peerConnection.connectionState}`);
+    if (peerConnection.connectionState == 'disconnected') {
+      remoteStream = null;
+      document.querySelector('#remoteVideo').srcObject = null;
+    }
   });
   peerConnection.addEventListener('signalingstatechange', () => {
     console.log(`Signaling state change: ${peerConnection.signalingState}`);
