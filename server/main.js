@@ -7,13 +7,6 @@ const client = new speech.SpeechClient();
 const translate = require('./translate.js');
 const synthesize = require('./synthesize.js');
 
-const request = {
-  config: {
-    encoding: 'WEBM_OPUS',
-    sampleRateHertz: 16000,
-    languageCode: 'en-US',
-  }
-};
 
 // const server = https.createServer({
 //   cert: fs.readFileSync('fullchain.pem'),
@@ -26,12 +19,35 @@ wss.on('connection', function connection(ws) {
   console.log('WebSocket connected');
   let recognizeStream = null;
   ws.on('message', function incoming(data) {
-    if (data.toString() == 'start') {
-      console.log('got start command');
-      recognizeStream = startRecognizeStream(ws);
+    if (data.toString() == 'english') {
+      // we speak portuguese but want to output english
+
+      const request = {
+        config: {
+          encoding: 'WEBM_OPUS',
+          sampleRateHertz: 16000,
+          languageCode: 'pt-BR',
+        }
+      };
+
+      console.log('recognizing portuguese, speaking english...');
+      recognizeStream = startRecognizeStream(ws, request, 'english');
+    }
+    else if (data.toString() == 'portuguese') {
+
+      const request = {
+        config: {
+          encoding: 'WEBM_OPUS',
+          sampleRateHertz: 16000,
+          languageCode: 'en-US',
+        }
+      };
+
+      console.log('recognizing english, speaking portuguese...');
+      recognizeStream = startRecognizeStream(ws, request, 'portuguese');
     }
     else {
-      console.log('writing to stream');
+      // console.log('writing to stream');
       recognizeStream.write(data);
     }
   });
@@ -44,7 +60,22 @@ wss.on('close', () => {
   console.log('WebSocket Server closed');
 });
 
-function startRecognizeStream(socket) {
+function startRecognizeStream(socket, request, lang) {
+  let languageCode = null;
+  let target = null;
+
+  if (lang == 'english') {
+    languageCode = 'en-US';
+    target = 'en';
+  }
+  else if (lang == 'portuguese') {
+    languageCode = 'pt-BR';
+    target = 'pt';
+  }
+  else {
+    console.log('Invalid lang');
+  }
+
   let activeTimer = false;
   let buffer = "";
   let timer = null;
@@ -60,9 +91,9 @@ function startRecognizeStream(socket) {
         if (!activeTimer) {
           activeTimer = true;
           timer = setTimeout(async () => {
-            let translation = await translate(buffer);
+            let translation = await translate(buffer, target);
             console.log(translation);
-            let speech = await synthesize(translation);
+            let speech = await synthesize(translation, languageCode);
             const speechBlob = Buffer.from(speech, 'binary');
             socket.send(speechBlob);
             buffer = "";
