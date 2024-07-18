@@ -384,19 +384,20 @@ function toggleMute() {
 function toggleTranslation() { translating ? stopTranslation() : startTranslation(); }
 
 function stopTranslation() {
-  console.log('Translation stopped');
-  // The media recorder is stopped and it closes the websocket on its own 
-  mediaRecorder.stop();
+  document.querySelector('#playbackBtn').disabled = true;
+  mediaRecorder.stop();    // The media recorder is stopped and it closes the websocket on its own 
   document.querySelector('#translationBtnLabel').innerText = 'Translation: Off';
   translating = false;
+  console.log('Translation stopped');
 }
 
 function startTranslation() {
-  console.log('Translation started');
+  document.querySelector('#playbackBtn').disabled = false;
   createWebSockets();
   createMediaRecorder();
   document.querySelector('#translationBtnLabel').innerText = 'Translation: On';
   translating = true;
+  console.log('Translation started');
 }
 
 function playAudio(data) {
