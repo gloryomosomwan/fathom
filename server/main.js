@@ -78,9 +78,6 @@ function startRecognizeStream(socket, request, lang) {
     console.log('Invalid lang');
   }
 
-  // let activeTimer = false;
-  // let buffer = "";
-  // let timer = null;
   console.log('streaming started...');
   let recognizeStream = client
     .streamingRecognize(request)
@@ -90,27 +87,6 @@ function startRecognizeStream(socket, request, lang) {
       if (data.results[0] && data.results[0].alternatives[0] && (data.results[0].alternatives[0].transcript != "")) {
         result = data.results[0].alternatives[0].transcript;
         console.log('Transcription:', result);
-        // buffer = buffer + result;
-        // if (!activeTimer) {
-        //   activeTimer = true;
-        //   timer = setTimeout(async () => {
-        //     let translation = await translate(buffer, target);
-        //     console.log(translation);
-        //     let speech = await synthesize(translation, languageCode);
-        //     const speechBlob = Buffer.from(speech, 'binary');
-        //     socket.send(speechBlob);
-        //     buffer = "";
-        //     activeTimer = false;
-        //   }, 3000);
-        // }
-        // else if (activeTimer) {
-        //   clearTimeout(timer);
-        //   timer = setTimeout(() => {
-        //     console.log(buffer);
-        //     buffer = "";
-        //     activeTimer = false;
-        //   }, 3000);
-        // }
         let translation = await translate(result, target);
         console.log('Translation:', translation);
         let speech = await synthesize(translation, languageCode);
