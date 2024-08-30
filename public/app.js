@@ -296,8 +296,8 @@ function registerPeerConnectionListeners() {
 }
 
 function createWebSockets() {
-  // const wsUri = "wss://www.fathomapp.xyz";
-  const wsUri = "ws://127.0.0.1";
+  const wsUri = "wss://www.fathomapp.xyz";
+  // const wsUri = "ws://127.0.0.1";
   let language = document.getElementById('language-select').value;
   websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
