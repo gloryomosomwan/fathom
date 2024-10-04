@@ -1,7 +1,9 @@
 const WebSocket = require('ws');
-const https = require('https');
+
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
+
 const speech = require('@google-cloud/speech');
 const client = new speech.SpeechClient();
 const translate = require('./translate.js');
