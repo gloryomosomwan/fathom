@@ -30,6 +30,7 @@ let muted = false;
 let playback = true;
 let urlParams = new URLSearchParams(window.location.search);
 let pendingRoomId = null;
+let inviteLink = null;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -40,6 +41,7 @@ function init() {
   document.querySelector('#muteBtn').addEventListener('click', toggleMute);
   document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
   document.querySelector('#playbackBtn').addEventListener('click', togglePlayback);
+  document.querySelector('#inviteBtn').addEventListener('click', invite);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
   languageDialog = new mdc.dialog.MDCDialog(document.querySelector('#lang-dialog'));
 
@@ -117,8 +119,6 @@ async function createRoom() {
   await roomRef.set(roomWithOffer);
   roomId = roomRef.id;
   console.log(`New room created with SDP offer. Room ID: ${roomRef.id}`);
-  document.querySelector(
-    '#currentRoom').innerText = `Current room is ${roomRef.id} - You are the caller!`;
   // Code for creating a room above
 
   peerConnection.addEventListener('track', event => {
@@ -152,14 +152,9 @@ async function createRoom() {
   });
   // Listen for remote ICE candidates above
 
-  const shareableLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
-  console.log('Shareable link:', shareableLink);
+  const inviteLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
 
-  const currentRoomText = document.querySelector('#currentRoom');
-  currentRoomText.innerHTML = `Current room is ${roomRef.id} - You are the caller!<br>
-  <span style="font-size: 0.8em">
-    <button class="btn btn-link p-0" onclick="shareRoom('${shareableLink}')">Share room link</button>
-  </span>`;
+  document.querySelector('#inviteBtn').disabled = false;
 }
 
 function joinRoom() {
@@ -167,7 +162,6 @@ function joinRoom() {
     addEventListener('click', async () => {
       roomId = document.querySelector('#room-id').value;
       console.log('Join room: ', roomId);
-      document.querySelector('#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
       await joinRoomById(roomId);
     }, { once: true });
   roomDialog.open();
@@ -304,7 +298,7 @@ async function hangUp(e) {
   document.querySelector('#translateBtn').disabled = true;
   document.querySelector('#playbackBtn').disabled = true;
   document.querySelector('#hangupBtn').disabled = true;
-  document.querySelector('#currentRoom').innerText = '';
+  document.querySelector('#inviteBtn').disabled = true;
 
   // Delete room on hangup
   if (roomId) {
@@ -494,19 +488,19 @@ function togglePlayback() {
   // }
 }
 
-async function shareRoom(url) {
+async function invite(url) {
   try {
     await navigator.share({
       title: 'Join my Fathom room',
       text: 'Click this link to join my video call:',
       url: url
     });
-    console.log('Successfully shared');
+    console.log('Successfully invited');
   } catch (err) {
     // Fallback for desktop or browsers that don't support sharing
     navigator.clipboard.writeText(url);
     // alert('Link copied to clipboard!');
-    console.log('Share failed:', err);
+    console.log('Invite failed:', err);
   }
 }
 
