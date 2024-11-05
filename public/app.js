@@ -12,6 +12,9 @@ const configuration = {
   iceCandidatePoolSize: 10,
 };
 
+// const wsUri = "wss://www.fathomapp.xyz";
+const wsUri = "ws://127.0.0.1";
+
 let peerConnection = null;
 let localStream = null;
 let remoteStream = null;
@@ -313,8 +316,6 @@ function registerPeerConnectionListeners() {
 }
 
 function createWebSockets() {
-  // const wsUri = "wss://www.fathomapp.xyz";
-  const wsUri = "ws://127.0.0.1";
   websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
