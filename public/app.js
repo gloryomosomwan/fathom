@@ -28,6 +28,8 @@ let mediaRecorder = null;
 let translating = true;
 let muted = false;
 let playback = true;
+let urlParams = new URLSearchParams(window.location.search);
+let pendingRoomId = null;
 
 function init() {
   document.querySelector('#cameraBtn').addEventListener('click', openUserMedia);
@@ -40,8 +42,8 @@ function init() {
   document.querySelector('#playbackBtn').addEventListener('click', togglePlayback);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
   languageDialog = new mdc.dialog.MDCDialog(document.querySelector('#lang-dialog'));
-  languageDialog.open();
 
+  languageDialog.open();
   const selectLangButton = document.getElementById('select-lang-button');
   selectLangButton.addEventListener('click', function () {
     const radios = document.querySelectorAll('input[name="test-dialog-baseline-confirmation-radio-group"]');
@@ -53,6 +55,14 @@ function init() {
     });
     console.log(selectedLanguage);
   });
+
+  const roomIdFromUrl = urlParams.get('room');
+  if (roomIdFromUrl) {
+    pendingRoomId = roomIdFromUrl;
+    if (localStream) {
+      joinRoomById(roomIdFromUrl);
+    }
+  }
 }
 
 async function createRoom() {
@@ -141,6 +151,14 @@ async function createRoom() {
     });
   });
   // Listen for remote ICE candidates above
+
+  const shareableLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+  console.log('Shareable link:', shareableLink);
+
+  const currentRoomText = document.querySelector('#currentRoom');
+  currentRoomText.innerHTML = `Current room is ${roomRef.id} - You are the caller!<br>
+    <span style="font-size: 0.8em">Share this link: 
+    <a href="${shareableLink}" target="_blank">${shareableLink}</a></span>`;
 }
 
 function joinRoom() {
@@ -155,6 +173,12 @@ function joinRoom() {
 }
 
 async function joinRoomById(roomId) {
+  if (!localStream) {
+    console.log('Please enable camera first');
+    document.querySelector('#cameraBtn').click();
+    return;
+  }
+
   document.querySelector('#createBtn').disabled = true;
   document.querySelector('#joinBtn').disabled = true;
   document.querySelector('#hangupBtn').disabled = false;
@@ -246,6 +270,11 @@ async function openUserMedia(e) {
   document.querySelector('#createBtn').disabled = false;
   document.querySelector('#videoBtn').disabled = false;
   document.querySelector('#muteBtn').disabled = false;
+
+  if (pendingRoomId) {
+    await joinRoomById(pendingRoomId);
+    pendingRoomId = null;
+  }
 }
 
 async function hangUp(e) {
