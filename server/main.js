@@ -9,11 +9,11 @@ const client = new speech.SpeechClient();
 const translate = require('./translate.js');
 const synthesize = require('./synthesize.js');
 
-// const server = https.createServer({
-//   cert: fs.readFileSync('fullchain.pem'),
-//   key: fs.readFileSync('privkey.pem')
-// });
-const server = http.createServer({});
+const server = https.createServer({
+  cert: fs.readFileSync('fullchain.pem'),
+  key: fs.readFileSync('privkey.pem')
+});
+// const server = http.createServer({});
 
 const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection(ws) {
@@ -90,5 +90,5 @@ wss.on('close', () => {
   console.log('WebSocket Server closed');
 });
 
-// server.listen(443);
-server.listen(80);
+server.listen(443);
+// server.listen(80);

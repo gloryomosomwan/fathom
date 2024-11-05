@@ -12,8 +12,8 @@ const configuration = {
   iceCandidatePoolSize: 10,
 };
 
-// const wsUri = "wss://www.fathomapp.xyz";
-const wsUri = "ws://127.0.0.1";
+const wsUri = "wss://www.fathomapp.xyz";
+// const wsUri = "ws://127.0.0.1";
 
 let peerConnection = null;
 let localStream = null;
@@ -157,8 +157,9 @@ async function createRoom() {
 
   const currentRoomText = document.querySelector('#currentRoom');
   currentRoomText.innerHTML = `Current room is ${roomRef.id} - You are the caller!<br>
-    <span style="font-size: 0.8em">Share this link: 
-    <a href="${shareableLink}" target="_blank">${shareableLink}</a></span>`;
+  <span style="font-size: 0.8em">
+    <button class="btn btn-link p-0" onclick="shareRoom('${shareableLink}')">Share room link</button>
+  </span>`;
 }
 
 function joinRoom() {
@@ -491,6 +492,22 @@ function togglePlayback() {
   // else {
   //   playback = true;
   // }
+}
+
+async function shareRoom(url) {
+  try {
+    await navigator.share({
+      title: 'Join my Fathom room',
+      text: 'Click this link to join my video call:',
+      url: url
+    });
+    console.log('Successfully shared');
+  } catch (err) {
+    // Fallback for desktop or browsers that don't support sharing
+    navigator.clipboard.writeText(url);
+    alert('Link copied to clipboard!');
+    console.log('Share failed:', err);
+  }
 }
 
 init();
