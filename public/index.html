@@ -83,14 +83,62 @@
             </div>
         </div>
     </div>
-    <label for="language-select">Choose the language you want to be speaking in:</label>
-    <select name="pets" id="language-select">
-        <option value="english">English</option>
-        <option value="portuguese">Portuguese</option>
-    </select>
+
     <div>
         <span id="currentRoom"></span>
     </div>
+
+    <div class="mdc-dialog" id="lang-dialog">
+        <div class="mdc-dialog__container">
+            <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
+                <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+                <h2 class="mdc-dialog__title" id="my-dialog-title"><!--
+         -->What language do you speak?<!--
+       --></h2>
+                <div class="mdc-dialog__content" id="my-dialog-content">
+                    <ul class="mdc-list">
+                        <li class="mdc-list-item" tabindex="0">
+                            <span class="mdc-list-item__graphic">
+                                <div class="mdc-radio">
+                                    <input class="mdc-radio__native-control" type="radio" id="test-dialog-baseline-confirmation-radio-english" name="test-dialog-baseline-confirmation-radio-group" checked>
+                                    <div class="mdc-radio__background">
+                                        <div class="mdc-radio__outer-circle"></div>
+                                        <div class="mdc-radio__inner-circle"></div>
+                                    </div>
+                                </div>
+                            </span>
+                            <label id="test-dialog-baseline-confirmation-radio-1-label" for="test-dialog-baseline-confirmation-radio-english" class="mdc-list-item__text">English</label>
+                        </li>
+                        <li class="mdc-list-item" tabindex="0">
+                            <span class="mdc-list-item__graphic">
+                                <div class="mdc-radio">
+                                    <input class="mdc-radio__native-control" type="radio" id="test-dialog-baseline-confirmation-radio-portuguese" name="test-dialog-baseline-confirmation-radio-group">
+                                    <div class="mdc-radio__background">
+                                        <div class="mdc-radio__outer-circle"></div>
+                                        <div class="mdc-radio__inner-circle"></div>
+                                    </div>
+                                </div>
+                            </span>
+                            <label id="test-dialog-baseline-confirmation-radio-1-label" for="test-dialog-baseline-confirmation-radio-portuguese" class="mdc-list-item__text">Portuguese</label>
+                        </li>
+                        <!-- ... -->
+                    </ul>
+                </div>
+                <div class="mdc-dialog__actions">
+                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Cancel</span>
+                    </button>
+                    <button type="button" id="select-lang-button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">OK</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="mdc-dialog__scrim"></div>
+    </div>
+
     <div class="mdc-dialog" id="room-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface">
@@ -115,6 +163,7 @@
         </div>
         <div class="mdc-dialog__scrim"></div>
     </div>
+
     <script src="app.js"></script>
 </body>
 

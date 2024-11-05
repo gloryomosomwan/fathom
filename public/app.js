@@ -17,6 +17,8 @@ let localStream = null;
 let remoteStream = null;
 let dataChannel = null;
 let roomDialog = null;
+let languageDialog = null;
+let selectedLanguage;
 let roomId = null;
 let websocket = null;
 let mediaRecorder = null;
@@ -34,6 +36,20 @@ function init() {
   document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
   document.querySelector('#playbackBtn').addEventListener('click', togglePlayback);
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
+  languageDialog = new mdc.dialog.MDCDialog(document.querySelector('#lang-dialog'));
+  languageDialog.open();
+
+  const selectLangButton = document.getElementById('select-lang-button');
+  selectLangButton.addEventListener('click', function () {
+    const radios = document.querySelectorAll('input[name="test-dialog-baseline-confirmation-radio-group"]');
+    radios.forEach(radio => {
+      if (radio.checked) {
+        const label = document.querySelector(`label[for="${radio.id}"]`);
+        selectedLanguage = label.textContent;
+      }
+    });
+    console.log(selectedLanguage);
+  });
 }
 
 async function createRoom() {
@@ -42,6 +58,7 @@ async function createRoom() {
   document.querySelector('#translateBtn').disabled = false;
   document.querySelector('#playbackBtn').disabled = false;
   document.querySelector('#hangupBtn').disabled = false;
+
   const db = firebase.firestore();
   const roomRef = await db.collection('rooms').doc();
 
@@ -128,8 +145,7 @@ function joinRoom() {
     addEventListener('click', async () => {
       roomId = document.querySelector('#room-id').value;
       console.log('Join room: ', roomId);
-      document.querySelector(
-        '#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
+      document.querySelector('#currentRoom').innerText = `Current room is ${roomId} - You are the callee!`;
       await joinRoomById(roomId);
     }, { once: true });
   roomDialog.open();
@@ -299,11 +315,10 @@ function registerPeerConnectionListeners() {
 function createWebSockets() {
   // const wsUri = "wss://www.fathomapp.xyz";
   const wsUri = "ws://127.0.0.1";
-  let language = document.getElementById('language-select').value;
   websocket = new WebSocket(wsUri);
   websocket.onopen = (e) => {
     console.log("Connected to WebSocket server");
-    websocket.send(language);
+    websocket.send(selectedLanguage);
   };
   websocket.onclose = (e) => {
     console.log("Disconnected from WebSocket server");

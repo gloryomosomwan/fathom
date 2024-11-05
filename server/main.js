@@ -61,7 +61,7 @@ wss.on('connection', function connection(ws) {
   }
 
   ws.on('message', function incoming(data) {
-    if (data.toString() == 'english') {
+    if (data.toString() == 'Portuguese') {
       // we speak portuguese but want to output english
       request.config.languageCode = 'pt-BR';
       target = 'en';
@@ -69,7 +69,7 @@ wss.on('connection', function connection(ws) {
       console.log('recognizing portuguese, speaking english...');
       recognizeStream = startRecognizeStream();
     }
-    else if (data.toString() == 'portuguese') {
+    else if (data.toString() == 'English') {
       request.config.languageCode = 'en-US';
       target = 'pt';
       synthesisLanguageCode = 'pt-BR';
