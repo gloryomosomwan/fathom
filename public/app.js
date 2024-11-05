@@ -505,7 +505,7 @@ async function shareRoom(url) {
   } catch (err) {
     // Fallback for desktop or browsers that don't support sharing
     navigator.clipboard.writeText(url);
-    alert('Link copied to clipboard!');
+    // alert('Link copied to clipboard!');
     console.log('Share failed:', err);
   }
 }
