@@ -443,7 +443,6 @@ function startTranslation() {
   document.querySelector('#playbackBtn').disabled = false;
   createWebSockets();
   createMediaRecorder();
-  // document.querySelector('#translationBtnLabel').innerText = 'Translation: On';
   translating = true;
   console.log('Translation started');
 }
