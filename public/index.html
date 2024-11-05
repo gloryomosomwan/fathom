@@ -15,45 +15,50 @@
     <script defer src="/__/firebase/7.13.1/firebase-firestore.js"></script>
     <!-- initialize the SDK after all desired features are loaded -->
     <script defer src="/__/firebase/init.js"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 
 <body>
-    <h1>Fathom</h1>
-    <div id="buttons">
-        <button class="mdc-button mdc-button--raised" id="cameraBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
-            <span class="mdc-button__label">Open camera & microphone</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="createBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">group_add</i>
-            <span class="mdc-button__label">Create room</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="videoBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">videocam</i>
-            <span class="mdc-button__label">Video</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="muteBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">mic</i>
-            <span class="mdc-button__label" id="muteBtnLabel">Mute</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="joinBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">group</i>
-            <span class="mdc-button__label">Join room</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="translateBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">translate</i>
-            <span class="mdc-button__label" id="translationBtnLabel">Translation: On</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="playbackBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">play_circle</i>
-            <span class="mdc-button__label" id="playbackBtnLabel">Playback: On</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" disabled id="hangupBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
-            <span class="mdc-button__label">Hangup</span>
-        </button>
+    <div id="videos">
+        <video id="localVideo" muted autoplay playsinline></video>
+        <video id="remoteVideo" autoplay playsinline></video>
+    </div>
+    <div id="dock">
+        <div id="buttons">
+            <button class="mdc-button mdc-button--raised" id="cameraBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">perm_camera_mic</i>
+                <span class="mdc-button__label">Open camera & microphone</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="createBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">group_add</i>
+                <span class="mdc-button__label">Create room</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="videoBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">videocam</i>
+                <span class="mdc-button__label">Video</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="muteBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">mic</i>
+                <span class="mdc-button__label" id="muteBtnLabel">Mute</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="joinBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">group</i>
+                <span class="mdc-button__label">Join room</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="translateBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">translate</i>
+                <span class="mdc-button__label" id="translationBtnLabel">Translation: On</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="playbackBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">play_circle</i>
+                <span class="mdc-button__label" id="playbackBtnLabel">Playback: On</span>
+            </button>
+            <button class="mdc-button mdc-button--raised" disabled id="hangupBtn">
+                <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
+                <span class="mdc-button__label">Hangup</span>
+            </button>
+        </div>
     </div>
     <label for="language-select">Choose the language you want to be speaking in:</label>
     <select name="pets" id="language-select">
@@ -62,10 +67,6 @@
     </select>
     <div>
         <span id="currentRoom"></span>
-    </div>
-    <div id="videos">
-        <video id="localVideo" muted autoplay playsinline></video>
-        <video id="remoteVideo" autoplay playsinline></video>
     </div>
     <div class="mdc-dialog" id="room-dialog" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title" aria-describedby="my-dialog-content">
         <div class="mdc-dialog__container">
