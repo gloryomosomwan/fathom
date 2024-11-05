@@ -24,10 +24,10 @@ body {
 
 #remoteVideo {
     position: absolute;
-    bottom: 100px;
-    right: 40px;
-    width: 100px;
-    height: 100px;
+    bottom: 10rem;
+    right: 2rem;
+    width: 8rem;
+    height: 10rem;
     background-color: grey;
     z-index: 2;
 }
@@ -37,7 +37,7 @@ body {
     backdrop-filter: blur(10px);
     position: absolute;
     z-index: 1;
-    height: 80px;
+    height: 120px;
     width: 100%;
     bottom: 0;
     display: flex;
@@ -57,11 +57,31 @@ body {
     align-items: center;
 }
 
-button {
+.button-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    margin: 0.3rem;
+}
+
+/* change to .button-wrapper button */
+#buttons button {
     display: inline-block;
     min-width: 60px;
     min-height: 60px;
     flex-shrink: 0;
     margin: 0.2em 0.1em;
-    border-radius: 100%;
+    border-radius: 50%;
+}
+
+button i {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+#buttons .button-label {
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
 }

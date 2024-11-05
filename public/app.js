@@ -41,6 +41,7 @@ async function createRoom() {
   document.querySelector('#joinBtn').disabled = true;
   document.querySelector('#translateBtn').disabled = false;
   document.querySelector('#playbackBtn').disabled = false;
+  document.querySelector('#hangupBtn').disabled = false;
   const db = firebase.firestore();
   const roomRef = await db.collection('rooms').doc();
 
@@ -123,9 +124,6 @@ async function createRoom() {
 }
 
 function joinRoom() {
-  document.querySelector('#createBtn').disabled = true;
-  document.querySelector('#joinBtn').disabled = true;
-
   document.querySelector('#confirmJoinBtn').
     addEventListener('click', async () => {
       roomId = document.querySelector('#room-id').value;
@@ -138,6 +136,10 @@ function joinRoom() {
 }
 
 async function joinRoomById(roomId) {
+  document.querySelector('#createBtn').disabled = true;
+  document.querySelector('#joinBtn').disabled = true;
+  document.querySelector('#hangupBtn').disabled = false;
+
   const db = firebase.firestore();
   const roomRef = db.collection('rooms').doc(`${roomId}`);
   const roomSnapshot = await roomRef.get();
@@ -225,7 +227,6 @@ async function openUserMedia(e) {
   document.querySelector('#createBtn').disabled = false;
   document.querySelector('#videoBtn').disabled = false;
   document.querySelector('#muteBtn').disabled = false;
-  document.querySelector('#hangupBtn').disabled = false;
 }
 
 async function hangUp(e) {
@@ -271,7 +272,7 @@ async function hangUp(e) {
     await roomRef.delete();
   }
 
-  document.location.reload(true);
+  // document.location.reload(true);
 }
 
 function registerPeerConnectionListeners() {
@@ -360,31 +361,55 @@ function registerDataChannelListeners() {
 }
 
 function toggleVideo() {
-  localStream.getVideoTracks()[0].enabled = !(localStream.getVideoTracks()[0].enabled);
+  let button = document.getElementById('videoBtn');
+  let icon = button.querySelector('i');
+  if (localStream.getVideoTracks()[0].enabled === true) {
+    localStream.getVideoTracks()[0].enabled = false;
+    button.classList.remove('btn-secondary');
+    button.classList.add('btn-light');
+    icon.classList.remove('bi-camera-video-fill');
+    icon.classList.add('bi-camera-video-off-fill');
+  } else {
+    localStream.getVideoTracks()[0].enabled = true;
+    button.classList.remove('btn-light');
+    button.classList.add('btn-secondary');
+    icon.classList.remove('bi-camera-video-off-fill');
+    icon.classList.add('bi-camera-video-fill');
+  }
 }
 
 function toggleMute() {
-  // Unmute
+  let button = document.getElementById('muteBtn');
+  let icon = button.querySelector('i');
   if (muted) {
     localStream.getAudioTracks()[0].enabled = true;
-    startTranslation();
-    document.querySelector('#translateBtn').disabled = false;
-    document.querySelector('#muteBtnLabel').innerText = 'Mute';
+    if (peerConnection) {
+      startTranslation();
+      document.querySelector('#translateBtn').disabled = false;
+    }
     muted = false;
+    button.classList.remove('btn-light');
+    button.classList.add('btn-secondary');
+    icon.classList.remove('bi-mic-mute-fill');
+    icon.classList.add('bi-mic-fill');
     console.log('Unmuted');
   }
-  // Mute
   else {
     localStream.getAudioTracks()[0].enabled = false;
-    if (translating) {
-      stopTranslation();
+    if (peerConnection) {
+      if (translating) {
+        stopTranslation();
+        document.querySelector('#translateBtn').disabled = true;
+      }
+      else {
+        console.log('Muted but translation already inactive');
+      }
     }
-    else {
-      console.log('Muted but translation already inactive');
-    }
-    document.querySelector('#translateBtn').disabled = true;
-    document.querySelector('#muteBtnLabel').innerText = 'Unmute';
     muted = true;
+    button.classList.remove('btn-secondary');
+    button.classList.add('btn-light');
+    icon.classList.remove('bi-mic-fill');
+    icon.classList.add('bi-mic-mute-fill');
     console.log('Muted');
   }
 }
@@ -394,7 +419,6 @@ function toggleTranslation() { translating ? stopTranslation() : startTranslatio
 function stopTranslation() {
   document.querySelector('#playbackBtn').disabled = true;
   mediaRecorder.stop();    // The media recorder is stopped and it closes the websocket on its own 
-  document.querySelector('#translationBtnLabel').innerText = 'Translation: Off';
   translating = false;
   console.log('Translation stopped');
 }
@@ -403,7 +427,7 @@ function startTranslation() {
   document.querySelector('#playbackBtn').disabled = false;
   createWebSockets();
   createMediaRecorder();
-  document.querySelector('#translationBtnLabel').innerText = 'Translation: On';
+  // document.querySelector('#translationBtnLabel').innerText = 'Translation: On';
   translating = true;
   console.log('Translation started');
 }
@@ -416,14 +440,13 @@ function playAudio(data) {
 }
 
 function togglePlayback() {
-  if (playback) {
-    playback = false;
-    document.querySelector('#playbackBtnLabel').innerText = 'Playback: Off';
-  }
-  else {
-    playback = true;
-    document.querySelector('#playbackBtnLabel').innerText = 'Playback: On';
-  }
+  playback = !playback;
+  // if (playback) {
+  //   playback = false;
+  // }
+  // else {
+  //   playback = true;
+  // }
 }
 
 init();
