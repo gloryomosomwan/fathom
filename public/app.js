@@ -46,6 +46,7 @@ function init() {
   languageDialog = new mdc.dialog.MDCDialog(document.querySelector('#lang-dialog'));
 
   languageDialog.open();
+  makeDraggable();
   const selectLangButton = document.getElementById('select-lang-button');
   selectLangButton.addEventListener('click', function () {
     const radios = document.querySelectorAll('input[name="test-dialog-baseline-confirmation-radio-group"]');
@@ -501,6 +502,69 @@ async function invite(url) {
     navigator.clipboard.writeText(url);
     // alert('Link copied to clipboard!');
     console.log('Invite failed:', err);
+  }
+}
+
+function makeDraggable() {
+  const localVideo = document.getElementById('localVideo');
+  let isDragging = false;
+  let currentX;
+  let currentY;
+  let initialX;
+  let initialY;
+  let xOffset = 0;
+  let yOffset = 0;
+
+  localVideo.addEventListener('mousedown', dragStart);
+  document.addEventListener('mousemove', drag);
+  document.addEventListener('mouseup', dragEnd);
+
+  // Touch events for mobile
+  localVideo.addEventListener('touchstart', dragStart);
+  document.addEventListener('touchmove', drag);
+  document.addEventListener('touchend', dragEnd);
+
+  function dragStart(e) {
+    if (e.type === 'touchstart') {
+      initialX = e.touches[0].clientX - xOffset;
+      initialY = e.touches[0].clientY - yOffset;
+    } else {
+      initialX = e.clientX - xOffset;
+      initialY = e.clientY - yOffset;
+    }
+
+    if (e.target === localVideo) {
+      isDragging = true;
+    }
+  }
+
+  function drag(e) {
+    if (isDragging) {
+      e.preventDefault();
+
+      if (e.type === 'touchmove') {
+        currentX = e.touches[0].clientX - initialX;
+        currentY = e.touches[0].clientY - initialY;
+      } else {
+        currentX = e.clientX - initialX;
+        currentY = e.clientY - initialY;
+      }
+
+      xOffset = currentX;
+      yOffset = currentY;
+
+      setTranslate(currentX, currentY, localVideo);
+    }
+  }
+
+  function setTranslate(xPos, yPos, el) {
+    el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+  }
+
+  function dragEnd(e) {
+    initialX = currentX;
+    initialY = currentY;
+    isDragging = false;
   }
 }
 
