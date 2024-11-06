@@ -10,8 +10,8 @@ const translate = require('./translate.js');
 const synthesize = require('./synthesize.js');
 
 const server = https.createServer({
-  cert: fs.readFileSync('fullchain.pem'),
-  key: fs.readFileSync('privkey.pem')
+  cert: fs.readFileSync('/home/glory/src/fathom/fullchain.pem'),
+  key: fs.readFileSync('/home/glory/src/fathom/privkey.pem')
 });
 // const server = http.createServer({});
 
