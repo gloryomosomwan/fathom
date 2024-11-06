@@ -41,7 +41,7 @@ function init() {
   document.querySelector('#muteBtn').addEventListener('click', toggleMute);
   document.querySelector('#translateBtn').addEventListener('click', toggleTranslation);
   document.querySelector('#playbackBtn').addEventListener('click', togglePlayback);
-  document.querySelector('#inviteBtn').addEventListener('click', invite);
+  document.querySelector('#inviteBtn').addEventListener('click', () => invite(inviteLink));
   roomDialog = new mdc.dialog.MDCDialog(document.querySelector('#room-dialog'));
   languageDialog = new mdc.dialog.MDCDialog(document.querySelector('#lang-dialog'));
 
@@ -153,7 +153,8 @@ async function createRoom() {
   });
   // Listen for remote ICE candidates above
 
-  const inviteLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+  inviteLink = `${window.location.origin}${window.location.pathname}?room=${roomId}`;
+  console.log('Invite link: ', inviteLink);
 
   document.querySelector('#inviteBtn').disabled = false;
 }
